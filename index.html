@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HosAppoint hospital appointment booking prototype for UI/UX Group B.">
+  <title>HosAppoint | Patient Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- LOGIN -->
+  <section id="loginView" class="login-screen">
+    <div class="login-card">
+      <div class="brand-mark large-mark" aria-hidden="true">✚<span>✓</span></div>
+      <p class="eyebrow">WELCOME TO</p>
+      <h1>HosAppoint</h1>
+      <p class="muted centered">Book your hospital consultation with ease.</p>
+      <form id="loginForm" class="stack-form">
+        <label for="loginEmail">Email address</label>
+        <input id="loginEmail" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <label for="loginPassword">Password</label>
+        <div class="password-wrap">
+          <input id="loginPassword" name="password" type="password" placeholder="Enter your password"
+            autocomplete="current-password" minlength="4" required>
+          <button type="button" class="password-toggle" id="togglePassword" aria-label="Show password">◉</button>
+        </div>
+        <button class="btn primary full" type="submit">Sign in</button>
+        <p class="tiny muted">Class demo: use any valid email and a password of 4 or more characters.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <div id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <a class="brand" href="#" data-page="dashboard">
+        <div class="brand-mark">✚<span>✓</span></div>
+        <span><strong>HosAppoint</strong><small>Patient portal</small></span>
+      </a>
+      <div class="side-label">MENU</div>
+      <nav class="side-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-page="dashboard"><span>▦</span> Dashboard</button>
+        <button class="nav-link" data-page="doctors"><span>♙</span> View doctors</button>
+        <button class="nav-link" data-page="appointments"><span>▤</span> My appointments</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-box"><strong>Need help?</strong>
+          <p>Contact the hospital reception for assistance.</p>
+        </div>
+        <button id="logoutBtn" class="nav-link logout"><span>↪</span> Sign out</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PATIENT PORTAL</p>
+          <h2 id="pageHeading">Patient dashboard</h2>
+        </div>
+        <div class="profile-chip">
+          <div class="avatar" id="avatarInitial">P</div>
+          <div><strong id="patientName">Patient</strong><small>Patient account</small></div>
+        </div>
+      </header>
+
+      <section id="dashboardPage" class="page">
+        <div class="welcome-banner">
+          <div>
+            <p class="eyebrow light">YOUR HEALTH, MADE SIMPLER</p>
+            <h1>Good day, <span id="welcomeName">Patient</span> 👋</h1>
+            <p>Find a doctor and schedule your next consultation.</p><button class="btn white" data-page="doctors">Find
+              a doctor <span></span></button>
+          </div>
+          <div class="banner-icon" aria-hidden="true">✚</div>
+        </div>
+        <div class="section-heading">
+          <div>
+            <h3>Your overview</h3>
+            <p class="muted">A quick look at your appointments.</p>
+          </div><button class="text-button" data-page="appointments">View all →</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-icon blue">▤</div>
+            <p>Total appointments</p><strong id="totalAppointments">0</strong><small>Bookings made in this demo</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon green">✓</div>
+            <p>Pending confirmation</p><strong id="pendingAppointments">0</strong><small>Awaiting hospital
+              confirmation</small>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon violet">♙</div>
+            <p>Doctors available</p><strong id="doctorCount">6</strong><small>Sample doctors to choose from</small>
+          </article>
+        </div>
+        <div class="section-heading">
+          <div>
+            <h3>How to book</h3>
+            <p class="muted">Three simple steps to request a consultation.</p>
+          </div>
+        </div>
+        <div class="steps-grid">
+          <article class="step-card"><span>01</span>
+            <div>
+              <h4>Choose a doctor</h4>
+              <p>Browse doctors by specialty and preference.</p>
+            </div>
+          </article>
+          <article class="step-card"><span>02</span>
+            <div>
+              <h4>Select a time</h4>
+              <p>Complete the appointment form with your details.</p>
+            </div>
+          </article>
+          <article class="step-card"><span>03</span>
+            <div>
+              <h4>Keep your reference</h4>
+              <p>Review the appointment summary after submission.</p>
+            </div>
+          </article>
+        </div>
+        <div class="section-heading">
+          <div>
+            <h3>Upcoming appointments</h3>
+            <p class="muted">Your most recent booking requests.</p>
+          </div>
+        </div>
+        <div id="dashboardAppointments" class="appointment-list"></div>
+      </section>
+
+      <section id="doctorsPage" class="page hidden">
+        <div class="page-intro">
+          <div>
+            <h3>Find your doctor</h3>
+            <p class="muted">Choose a doctor who best fits your health concern.</p>
+          </div><span class="pill">6 sample doctors</span>
+        </div>
+        <div class="filter-bar">
+          <label class="search-box"><span>⌕</span><input id="doctorSearch" type="search"
+              placeholder="Search doctor or specialty"></label>
+          <select id="specialtyFilter" aria-label="Filter by specialty">
+            <option value="">All specialties</option>
+            <option>General Medicine</option>
+            <option>Cardiology</option>
+            <option>Pediatrics</option>
+            <option>Dermatology</option>
+            <option>Gynecology</option>
+            <option>Orthopedics</option>
+          </select>
+          <select id="genderFilter" aria-label="Filter by doctor gender">
+            <option value="">Any gender</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+        <div id="doctorsGrid" class="doctors-grid"></div>
+        <div id="noDoctors" class="empty-state hidden">
+          <div>⌕</div>
+          <h3>No doctors found</h3>
+          <p>Try another name or filter.</p>
+        </div>
+      </section>
+
+      <section id="bookingPage" class="page hidden">
+        <button class="back-link" data-page="doctors">Back to doctors</button>
+        <div class="booking-layout">
+          <div class="booking-main">
+            <div class="page-intro">
+              <div>
+                <h3>Book an appointment</h3>
+                <p class="muted">Enter your details and preferred consultation time.</p>
+              </div>
+            </div>
+            <form id="bookingForm" class="form-card">
+              <div class="selected-doctor" id="selectedDoctorSummary"></div>
+              <input type="hidden" id="selectedDoctorId" required>
+              <div class="form-grid">
+                <div class="field full-field"><label for="fullName">Full name *</label><input id="fullName" required
+                    minlength="2" placeholder="Enter your full name"></div>
+                <div class="field"><label for="age">Age *</label><input id="age" type="number" min="1" max="120"
+                    required placeholder="e.g. 25"></div>
+                <div class="field"><label for="gender">Gender *</label><select id="gender" required>
+                    <option value="">Select gender</option>
+                    <option>Female</option>
+                    <option>Male</option>
+                    <option>Prefer not to say</option>
+                  </select></div>
+                <div class="field full-field"><label for="patientEmail">Email address *</label><input id="patientEmail"
+                    type="email" required placeholder="you@example.com"></div>
+                <div class="field full-field"><label for="phone">Phone number *</label><input id="phone" type="tel"
+                    required minlength="7" placeholder="e.g. 07XX XXX XXX"></div>
+                <div class="field full-field"><label for="location">Location / area *</label><input id="location"
+                    required placeholder="e.g. Ntinda, Kampala"></div>
+                <div class="field"><label for="appointmentDate">Preferred date *</label><input id="appointmentDate"
+                    type="date" required></div>
+                <div class="field"><label for="appointmentTime">Preferred time *</label><select id="appointmentTime"
+                    required>
+                    <option value="">Choose a time</option>
+                    <option>08:00 AM</option>
+                    <option>09:00 AM</option>
+                    <option>10:00 AM</option>
+                    <option>11:00 AM</option>
+                    <option>12:00 PM</option>
+                    <option>02:00 PM</option>
+                    <option>03:00 PM</option>
+                    <option>04:00 PM</option>
+                  </select></div>
+                <div class="field full-field"><label for="concern">Reason for visit *</label><textarea id="concern"
+                    rows="3" required
+                    placeholder="Briefly describe your concern (avoid sharing highly sensitive details)"></textarea>
+                </div>
+              </div>
+              <div class="form-actions"><button type="button" class="btn secondary"
+                  data-page="doctors">Cancel</button><button type="submit" class="btn primary">Submit appointment
+                  request</button></div>
+              <p class="tiny muted">This is a student prototype. It does not send information to a real hospital or
+                confirm a real appointment.</p>
+            </form>
+          </div>
+          <aside class="booking-note">
+            <div class="note-icon">♡</div>
+            <h4>Before you submit</h4>
+            <ul>
+              <li>Check your contact details.</li>
+              <li>Choose a date from today onwards.</li>
+              <li>Your request will receive a demo reference number.</li>
+            </ul>
+            <p>For urgent or emergency symptoms, seek immediate medical care rather than waiting for an online
+              appointment.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="confirmationPage" class="page hidden">
+        <div class="confirmation-card">
+          <div class="success-icon">✓</div>
+          <p class="eyebrow">REQUEST RECEIVED</p>
+          <h2>Appointment request submitted</h2>
+          <p class="muted centered">Your request has been saved in this browser demo. A real hospital would need to
+            confirm the appointment separately.</p>
+          <div class="reference-box"><small>DEMO REFERENCE NUMBER</small><strong
+              id="confirmationReference">HA-000000</strong></div>
+          <div id="confirmationSummary" class="summary-panel"></div>
+          <div class="confirmation-actions"><button class="btn primary" id="viewDetailsBtn">View appointment
+              details</button><button class="btn secondary" data-page="dashboard">Back to dashboard</button></div>
+        </div>
+      </section>
+
+      <section id="detailsPage" class="page hidden">
+        <button class="back-link" data-page="appointments">Back to my appointments</button>
+        <div class="page-intro">
+          <div>
+            <h3>Appointment details</h3>
+            <p class="muted">Review the information in your booking request.</p>
+          </div><span id="detailStatus" class="status pending">Pending confirmation</span>
+        </div>
+        <div id="appointmentDetailsCard" class="details-card"></div>
+        <div class="notice"><strong>Important:</strong> This is a simulated booking. No hospital staff have received
+          this request.</div>
+        <div class="form-actions"><button class="btn secondary" data-page="appointments">My appointments</button><button
+            class="btn primary" data-page="doctors">Book another appointment</button></div>
+      </section>
+
+      <section id="appointmentsPage" class="page hidden">
+        <div class="page-intro">
+          <div>
+            <h3>My appointments</h3>
+            <p class="muted">Track the requests you have submitted in this browser.</p>
+          </div><button class="btn primary" data-page="doctors">Book appointment</button>
+        </div>
+        <div id="allAppointments" class="appointment-list"></div>
+      </section>
+      <footer class="footer">&copy; HosAppoint | &lt; 2026&gt;</footer>
+    </main>
+  </div>
+</body>
+
+</html>
